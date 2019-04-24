@@ -1,0 +1,27 @@
+image: php:7.1
+
+# Configure the base image
+before_script:
+  - bash .gitlab-ci.sh > /dev/null
+  - git submodule sync --recursive
+  - git submodule update --init --recursive
+
+# Select folders to cache...
+cache:
+  paths:
+    - vendor/
+
+# Define pipline stages
+stages:
+  - lint
+  - tests
+
+lint:php:
+  stage: lint
+  script:
+    - vendor/bin/php-cs-fixer fix --dry-run --diff
+
+test:app:
+  type: tests
+  script:
+    - vendor/bin/phpunit --colors=never --coverage-text
