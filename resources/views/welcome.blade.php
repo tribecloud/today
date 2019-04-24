@@ -11,47 +11,9 @@
 <body>
     <div class="container">
         <div class="logo"><img src="images/logo.svg" alt="Logo"></div>
-        <div class="form">
-            <form action="">
-                <input type="text" placeholder="What are you going to do?">
-                <a href="#"><img src="images/plus.svg" alt=""></a>
-            </form>
-        </div>
 
-        <div class="panel-todos">
-            <div class="navs">
-                <div class="counter">
-                    2 items left
-                </div>
-                <div>
-                    <ul>
-                        <li class="active"><a href="#">All</a></li>
-                        <li><a href="#">Active</a></li>
-                        <li><a href="#">Completed</a></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="todos">
-                <div class="todo">
-                    <a class="checkbox" href="#">
-                    </a>
-                    <div class="content">
-                        Cuci piring
-                    </div>
-                    <a class="remove" href="#">
-                    </a>
-                </div>
-                <div class="todo checked">
-                    <a class="checkbox" href="#">
-                    </a>
-                    <div class="content">
-                        Cuci piring
-                    </div>
-                    <a class="remove" href="#">
-                    </a>
-                </div>
-            </div>
-        </div>
+        <div id="app"></div>
     </div>
+    <script src="{{mix('js/app.js')}}"></script>
 </body>
 </html>
