@@ -1,53 +1,91 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import Todos from './components/Todos';
 import FormTodo from './components/FormTodo';
+import './bootstrap';
 
 function App() {
     const [todos, setTodos] = useState([]);
-
     const [type, setType] = useState('all');
+    const [loaded, setLoaded] = useState(false);
 
-    const handleClick = (e, id) => {
+    useEffect(() => {
+        if (!loaded) {
+            axios.get('/api/todos')
+                .then(resp => {
+                    setLoaded(true);
+                    setTodos(resp.data);
+                })
+                .catch(err => {
+                    console.error(err);
+                })
+            ;
+        }
+    });
+
+    const handleCheckboxClick = (e, id) => {
         e.preventDefault();
 
-        let newTodos = [...todos];
-        newTodos = newTodos.map((item, index) => {
-            if (item.id === id) {
-                item.completed = !item.completed;
-            }
+        let todo = todos.find(item => item.id === id);
 
-            return item;
-        });
+        axios.patch('/api/todos/' + id, {
+                completed: !todo.completed
+            })
+            .then(resp => {
+                let newTodos = [...todos];
+                newTodos = newTodos.map((item, index) => {
+                    if (item.id === id) {
+                        item = resp.data;
+                    }
 
-        setTodos(newTodos);
+                    return item;
+                });
+
+                setTodos(newTodos);
+            })
+            .catch(err => {
+                console.error(err);
+            })
+        ;
     }
 
     const handleRemove = (e, id) => {
-        console.log('removed ', id)
         e.preventDefault();
 
-        let newTodos = [...todos];
-        newTodos = newTodos.filter((item, index) => {
-            return item.id !== id;
-        });
+        axios.delete('/api/todos/' + id)
+            .then(resp => {
+                let newTodos = [...todos];
+                newTodos = newTodos.filter((item, index) => {
+                    return item.id !== id;
+                });
 
-        setTodos(newTodos);
+                setTodos(newTodos);
+            })
+            .catch(err => {
+                console.error(err);
+            })
+        ;
     };
 
     const handleFormsubmit = (e, content) => {
         e.preventDefault();
 
-        let todo = {
-            id: (new Date()).getTime(),
-            content: content,
-            completed: false,
-        };
+        axios.post('/api/todos', {
+                content: content,
+                completed: false,
+            })
+            .then(resp => {
+                let newTodos = [...todos];
+                newTodos.push(resp.data);
 
-        let newTodos = [...todos];
-        newTodos.push(todo);
+                setTodos(newTodos);
+            })
+            .catch(err => {
+                console.error(err);
+            })
+        ;
 
-        setTodos(newTodos);
+
     };
 
     const counter = () => {
@@ -92,7 +130,7 @@ function App() {
                 </div>
             </div>
             <div className="todos">
-                <Todos todos={viewedTodos()} clicked={handleClick} removed={handleRemove} />
+                <Todos todos={viewedTodos()} clicked={handleCheckboxClick} removed={handleRemove} />
             </div>
         </div>
     </React.Fragment>;

@@ -21,3 +21,5 @@ if (token) {
 } else {
     console.error('CSRF token not found: https://laravel.com/docs/csrf#csrf-x-csrf-token');
 }
+
+window.axios.defaults.headers.common['Authorization'] = 'Bearer iAmsH03rRuhChvdrDbxNNkonyMh9HyJTwpxyXVKDmVG5rpsI6imuyS7c8taX';

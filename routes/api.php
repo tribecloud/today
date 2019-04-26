@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Http\Request;
+use App\Todo;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,3 +17,27 @@ use Illuminate\Http\Request;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::post('/todos', function(Request $request) {
+    // validation
+
+    // store to database / persists
+    $todo = auth()->user()->todos()->create($request->all());
+
+    // return response
+    return $todo;
+})->middleware('auth:api');
+
+Route::get('/todos', function(){
+    return auth()->user()->todos;
+})->middleware('auth:api');
+
+Route::delete('/todos/{todo}', function(Todo $todo) {
+    $todo->delete();
+})->middleware('auth:api');
+
+Route::patch('/todos/{todo}', function(Todo $todo, Request $request) {
+    $todo->update($request->all());
+
+    return $todo;
+})->middleware('auth:api');
