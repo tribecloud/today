@@ -11,6 +11,66 @@ class TodosTest extends TestCase
     use RefreshDatabase, WithFaker;
 
     /** @test */
+    public function user_can_login_with_correct_credentials()
+    {
+        $this->withExceptionHandling();
+
+        $user = factory('App\User')->create([
+            'password' => bcrypt($password = 'correct-password')
+        ]);
+
+        $attributes = [
+            'email' => $user->email,
+            'password' => $password
+        ];
+
+        $response = $this->json('post', '/api/login', $attributes);
+
+        $response->assertJson(['id' => $user->id], true);
+        $response->assertStatus(200);
+    }
+
+    /** @test */
+    public function user_can_not_login_with_incorrect_credentials()
+    {
+        $this->withExceptionHandling();
+
+        $user = factory('App\User')->create([
+            'password' => bcrypt($password = 'correct-password')
+        ]);
+
+        $attributes = [
+            'email' => $user->email,
+            'password' => bcrypt('incorrect-password')
+        ];
+
+        $response = $this->json('post', '/api/login', $attributes);
+
+        $response->assertStatus(401);
+    }
+
+    /** @test */
+    public function check_user_login()
+    {
+        $this->withExceptionHandling();
+
+        $token = \Str::random(60);
+
+        $user = factory('App\User')->create([
+            'api_token' => $token
+        ]);
+
+        $attributes = [
+            'api_token' => $token
+        ];
+
+        $response = $this->json('get', '/api/check-login/'. $token, $attributes);
+
+        $response->assertJson($user->toArray(), true);
+        $response->assertStatus(200);
+    }
+
+    /** @test */
     public function a_user_can_add_a_todo()
     {
         $this->withoutExceptionHandling();

@@ -26753,14 +26753,43 @@ function App() {
       loaded = _useState6[0],
       setLoaded = _useState6[1];
 
+  var _useState7 = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])(false),
+      _useState8 = _slicedToArray(_useState7, 2),
+      login = _useState8[0],
+      setLogin = _useState8[1];
+
+  var _useState9 = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])(localStorage.getItem('api_token')),
+      _useState10 = _slicedToArray(_useState9, 2),
+      apitoken = _useState10[0],
+      setApitoken = _useState10[1];
+
+  var _useState11 = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])(''),
+      _useState12 = _slicedToArray(_useState11, 2),
+      email = _useState12[0],
+      setEmail = _useState12[1];
+
+  var _useState13 = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])(''),
+      _useState14 = _slicedToArray(_useState13, 2),
+      password = _useState14[0],
+      setPassword = _useState14[1];
+
   Object(react__WEBPACK_IMPORTED_MODULE_0__["useEffect"])(function () {
     if (!loaded) {
-      axios.get('/api/todos').then(function (resp) {
-        setLoaded(true);
-        setTodos(resp.data);
+      axios.get('/api/check-login/' + apitoken).then(function (resp) {
+        setLogin(true);
       })["catch"](function (err) {
-        console.error(err);
+        setLogin(false);
+        setLoaded(true);
       });
+
+      if (login) {
+        axios.get('/api/todos').then(function (resp) {
+          setLoaded(true);
+          setTodos(resp.data);
+        })["catch"](function (err) {
+          console.error(err);
+        });
+      }
     }
   });
 
@@ -26842,42 +26871,89 @@ function App() {
     return newTodos;
   };
 
-  return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_FormTodo__WEBPACK_IMPORTED_MODULE_3__["default"], {
-    submitted: handleFormsubmit
-  }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "panel-todos"
-  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "navs"
-  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "counter"
-  }, counter(), " items left"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("ul", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
-    className: type == 'all' ? 'active' : ''
-  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
-    href: "#",
-    onClick: function onClick(e) {
-      return handleNavClick(e, 'all');
-    }
-  }, "All")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
-    className: type == 'active' ? 'active' : ''
-  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
-    href: "#",
-    onClick: function onClick(e) {
-      return handleNavClick(e, 'active');
-    }
-  }, "Active")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
-    className: type == 'completed' ? 'active' : ''
-  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
-    href: "#",
-    onClick: function onClick(e) {
-      return handleNavClick(e, 'completed');
-    }
-  }, "Completed"))))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "todos"
-  }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_Todos__WEBPACK_IMPORTED_MODULE_2__["default"], {
-    todos: viewedTodos(),
-    clicked: handleCheckboxClick,
-    removed: handleRemove
-  }))));
+  var handleEmailChange = function handleEmailChange(e) {
+    setEmail(e.target.value);
+  };
+
+  var handlePasswordChange = function handlePasswordChange(e) {
+    setPassword(e.target.value);
+  };
+
+  var handelClickLogin = function handelClickLogin(e) {
+    e.preventDefault();
+    axios.post('/api/login', {
+      email: email,
+      password: password
+    }).then(function (resp) {
+      console.log(resp.data);
+      setLogin(true);
+      localStorage.setItem('api_token', resp.data.api_token);
+    })["catch"](function (err) {
+      console.log(err);
+    });
+  };
+
+  if (login) {
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_FormTodo__WEBPACK_IMPORTED_MODULE_3__["default"], {
+      submitted: handleFormsubmit
+    }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: "panel-todos"
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: "navs"
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: "counter"
+    }, counter(), " items left"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("ul", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
+      className: type == 'all' ? 'active' : ''
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+      href: "#",
+      onClick: function onClick(e) {
+        return handleNavClick(e, 'all');
+      }
+    }, "All")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
+      className: type == 'active' ? 'active' : ''
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+      href: "#",
+      onClick: function onClick(e) {
+        return handleNavClick(e, 'active');
+      }
+    }, "Active")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
+      className: type == 'completed' ? 'active' : ''
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+      href: "#",
+      onClick: function onClick(e) {
+        return handleNavClick(e, 'completed');
+      }
+    }, "Completed"))))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: "todos"
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_Todos__WEBPACK_IMPORTED_MODULE_2__["default"], {
+      todos: viewedTodos(),
+      clicked: handleCheckboxClick,
+      removed: handleRemove
+    }))));
+  } else {
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: "login-panel"
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("form", {
+      action: "#"
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: "login-input"
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+      type: "email",
+      placeholder: "Email",
+      onChange: handleEmailChange
+    })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: "login-input"
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+      type: "password",
+      placeholder: "Password",
+      onChange: handlePasswordChange
+    })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      className: "login-input"
+    }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+      className: "btn-login",
+      onClick: handelClickLogin
+    }, "Login"))));
+  }
 }
 
 react_dom__WEBPACK_IMPORTED_MODULE_1___default.a.render(react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(App, null), document.getElementById('app'));
@@ -26912,7 +26988,7 @@ if (token) {
   console.error('CSRF token not found: https://laravel.com/docs/csrf#csrf-x-csrf-token');
 }
 
-window.axios.defaults.headers.common['Authorization'] = 'Bearer iAmsH03rRuhChvdrDbxNNkonyMh9HyJTwpxyXVKDmVG5rpsI6imuyS7c8taX';
+window.axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('api_token');
 
 /***/ }),
 
@@ -27056,7 +27132,7 @@ var Todos = function Todos(props) {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! /Users/tribeclouddevtwo/code/today/resources/js/app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! /home/demon/2019/today/resources/js/app.js */"./resources/js/app.js");
 
 
 /***/ })

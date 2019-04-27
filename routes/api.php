@@ -18,6 +18,36 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+Route::post('/login', function(Request $request) {
+    $user = App\User::where('email', $request->email);
+
+    if($user->count()) {
+        if(password_verify($request->password, $user->first()->password)) {
+            $user->update([
+                'api_token' => Str::random(60)
+            ]);
+            return $user->first();
+        } else {
+            return abort(401, "error");
+        }
+    } else {
+        return abort(401, "error");
+    }
+
+});
+
+Route::get('/check-login/{api_token}', function($api_token) {
+
+    $user = App\User::where('api_token', $api_token);
+
+    if($user->count() > 0) {
+        return $user->first();
+    } else {
+        return abort(401);
+    }
+
+});
+
 Route::post('/todos', function(Request $request) {
     // validation
 

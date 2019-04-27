@@ -132,3 +132,58 @@ body {
     background: transparent url(../images/remove.svg) no-repeat;
 
 }
+
+.msg {
+    text-align: center;
+}
+
+.login-panel {
+    text-align: center;
+}
+
+.login-panel form .login-input input {
+    width: 50%;
+    height: 30px;
+    margin-bottom: 12px;
+    font-family: inherit;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #7f878f;
+    border: 0;
+    padding: 10px 5px 10px 5px;
+    border-bottom: 2px solid #bbbec1;
+    background-color: #f1f5f8;
+}
+
+.login-panel form .login-input input:focus {
+    outline: none;
+    border-bottom: 2px solid blue;
+    background-color: white;
+}
+
+.login-panel form .login-input input::placeholder {
+    font-family: inherit;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #b8c2cc;
+}
+
+.btn-login {
+    width: 50%;
+    height: 35px;
+    border: none;
+    font-family: inherit;
+    font-weight: bold;
+    background-color: #38c172;
+    color: white;
+    margin-top: 10px;
+    cursor: pointer;
+}
+
+.btn-login:focus {
+    outline: none;
+}
+
+.btn-login:active {
+    width: 49%;
+}
