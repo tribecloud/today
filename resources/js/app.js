@@ -8,18 +8,33 @@ function App() {
     const [todos, setTodos] = useState([]);
     const [type, setType] = useState('all');
     const [loaded, setLoaded] = useState(false);
+    const [login, setLogin] = useState(false);
+    const [apitoken, setApitoken] = useState(localStorage.getItem('api_token'));
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
 
     useEffect(() => {
         if (!loaded) {
-            axios.get('/api/todos')
+            axios.get('/api/check-login/'+apitoken)
                 .then(resp => {
-                    setLoaded(true);
-                    setTodos(resp.data);
+                    setLogin(true);
                 })
                 .catch(err => {
-                    console.error(err);
+                    setLogin(false);
+                    setLoaded(true);
                 })
-            ;
+
+            if(login) {
+                axios.get('/api/todos')
+                    .then(resp => {
+                        setLoaded(true);
+                        setTodos(resp.data);
+                    })
+                    .catch(err => {
+                        console.error(err);
+                    })
+                ;
+            }
         }
     });
 
@@ -114,26 +129,68 @@ function App() {
         return newTodos;
     }
 
-    return <React.Fragment>
-        <FormTodo submitted={handleFormsubmit} />
-        <div className="panel-todos">
-            <div className="navs">
-                <div className="counter">
-                    {counter()} items left
+    const handleEmailChange = (e) => {
+        setEmail(e.target.value);
+    }
+
+    const handlePasswordChange = (e) => {
+        setPassword(e.target.value);
+    }
+
+    const handelClickLogin = (e) => {
+        e.preventDefault();
+
+        axios.post('/api/login', {
+            email: email,
+            password: password
+        })
+        .then(resp => {
+            console.log(resp.data)
+            setLogin(true);
+            localStorage.setItem('api_token', resp.data.api_token);
+        })
+        .catch(err => {
+            console.log(err)
+        });
+    }
+
+    if(login) {
+        return <React.Fragment>
+            <FormTodo submitted={handleFormsubmit} />
+            <div className="panel-todos">
+                <div className="navs">
+                    <div className="counter">
+                        {counter()} items left
+                    </div>
+                    <div>
+                        <ul>
+                            <li className={type=='all' ? 'active' : ''}><a href="#" onClick={(e) => handleNavClick(e, 'all')}>All</a></li>
+                            <li className={type=='active' ? 'active' : ''}><a href="#" onClick={(e) => handleNavClick(e, 'active')}>Active</a></li>
+                            <li className={type=='completed' ? 'active' : ''}><a href="#" onClick={(e) => handleNavClick(e, 'completed')}>Completed</a></li>
+                        </ul>
+                    </div>
                 </div>
-                <div>
-                    <ul>
-                        <li className={type=='all' ? 'active' : ''}><a href="#" onClick={(e) => handleNavClick(e, 'all')}>All</a></li>
-                        <li className={type=='active' ? 'active' : ''}><a href="#" onClick={(e) => handleNavClick(e, 'active')}>Active</a></li>
-                        <li className={type=='completed' ? 'active' : ''}><a href="#" onClick={(e) => handleNavClick(e, 'completed')}>Completed</a></li>
-                    </ul>
+                <div className="todos">
+                    <Todos todos={viewedTodos()} clicked={handleCheckboxClick} removed={handleRemove} />
                 </div>
             </div>
-            <div className="todos">
-                <Todos todos={viewedTodos()} clicked={handleCheckboxClick} removed={handleRemove} />
-            </div>
-        </div>
-    </React.Fragment>;
+        </React.Fragment>;
+    } else {
+        return <div className="login-panel">
+                <form action="#">
+                    <div className="login-input">
+                        <input type="email" placeholder="Email" onChange={handleEmailChange}/>
+                    </div>
+                    <div className="login-input">
+                        <input type="password" placeholder="Password" onChange={handlePasswordChange}/>
+                    </div>
+                    <div className="login-input">
+                        <button className="btn-login" onClick={handelClickLogin}>Login</button>
+                    </div>
+                </form>
+            </div>;
+    }
+
 }
 
 ReactDOM.render(<App />, document.getElementById('app'));
